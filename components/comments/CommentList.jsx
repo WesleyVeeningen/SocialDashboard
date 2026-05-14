@@ -18,7 +18,7 @@ function CommentSkeleton() {
   );
 }
 
-export default function CommentList({ comments, isLoading, error, onReply, onLike }) {
+export default function CommentList({ comments, isLoading, error, onReply, onLike, onHide, onDelete, selectable = false, selectedIds, onToggleSelect }) {
   if (error) {
     return (
       <Alert variant="destructive">
@@ -52,7 +52,17 @@ export default function CommentList({ comments, isLoading, error, onReply, onLik
     <ScrollArea className="max-h-[600px] pr-4">
       <div className="space-y-4">
         {comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} onReply={onReply} onLike={onLike} />
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            onReply={onReply}
+            onLike={onLike}
+            onHide={onHide}
+            onDelete={onDelete}
+            selectable={selectable}
+            selected={selectedIds?.has(comment.id) ?? false}
+            onToggleSelect={onToggleSelect}
+          />
         ))}
       </div>
     </ScrollArea>

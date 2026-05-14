@@ -56,7 +56,7 @@ export function usePosts() {
     if (nextCursor) fetchPosts(nextCursor);
   }, [nextCursor, fetchPosts]);
 
-  const createPost = useCallback(async (message, photoAlreadyPosted = false) => {
+  const createPost = useCallback(async (message, photoAlreadyPosted = false, scheduled_publish_time = null) => {
     if (!activeAccount?.token) throw new Error('No active account');
 
     if (photoAlreadyPosted) {
@@ -70,26 +70,37 @@ export function usePosts() {
         'Content-Type': 'application/json',
         'x-fb-token': activeAccount.token,
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, ...(scheduled_publish_time ? { scheduled_publish_time } : {}) }),
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
-    await fetchPosts();
+    if (!scheduled_publish_time) await fetchPosts();
     return data;
   }, [activeAccount?.token, fetchPosts]);
 
   const deletePost = useCallback(async (postId) => {
     if (!activeAccount?.token) throw new Error('No active account');
-
     const res = await fetch(`/api/facebook/posts/${postId}`, {
       method: 'DELETE',
       headers: { 'x-fb-token': activeAccount.token },
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-
     setPosts((prev) => prev.filter((p) => p.id !== postId));
+    return data;
+  }, [activeAccount?.token]);
+
+  const editPost = useCallback(async (postId, message) => {
+    if (!activeAccount?.token) throw new Error('No active account');
+    const res = await fetch(`/api/facebook/posts/${postId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-fb-token': activeAccount.token },
+      body: JSON.stringify({ message }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, message } : p));
     return data;
   }, [activeAccount?.token]);
 
@@ -101,6 +112,7 @@ export function usePosts() {
     loadMore,
     createPost,
     deletePost,
+    editPost,
     refresh: () => fetchPosts(),
   };
 }

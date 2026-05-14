@@ -3,17 +3,13 @@ import { callFbApi, getTokenFromRequest } from '@/lib/facebook';
 
 export async function GET(request) {
   const token = getTokenFromRequest(request);
-  if (!token) {
-    return NextResponse.json({ error: 'No token provided' }, { status: 401 });
-  }
+  if (!token) return NextResponse.json({ error: 'No token provided' }, { status: 401 });
 
   try {
     const data = await callFbApi({
-      path: '/me',
+      path: '/me/scheduled_posts',
       token,
-      params: {
-        fields: 'id,name,picture.width(200).height(200),followers_count,about,category',
-      },
+      params: { fields: 'id,message,scheduled_publish_time,full_picture', limit: '20' },
     });
     return NextResponse.json(data);
   } catch (err) {

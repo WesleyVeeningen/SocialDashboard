@@ -59,16 +59,22 @@ export async function POST(request) {
       return NextResponse.json(data);
     }
 
-    const { message } = await request.json();
+    const { message, scheduled_publish_time } = await request.json();
     if (!message?.trim()) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
+    }
+
+    const body = { message };
+    if (scheduled_publish_time) {
+      body.published = false;
+      body.scheduled_publish_time = scheduled_publish_time;
     }
 
     const data = await callFbApi({
       path: '/me/feed',
       method: 'POST',
       token,
-      body: { message },
+      body,
     });
     return NextResponse.json(data);
   } catch (err) {

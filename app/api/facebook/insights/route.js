@@ -32,7 +32,7 @@ export async function GET(request) {
   try {
     const [metricResults, fans] = await Promise.all([
       Promise.all(METRICS.map(fetchMetric)),
-      callFbApi({ path: '/me', token, params: { fields: 'fan_count,followers_count' } }),
+      callFbApi({ path: '/me', token, params: { fields: 'followers_count' } }).catch(() => null),
     ]);
 
     const insights = metricResults.filter(Boolean);
