@@ -14,7 +14,7 @@ import { useAccounts } from '@/hooks/useAccounts';
 function WelcomeScreen() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-6 text-center px-6">
+    <div className="w-full flex flex-col items-center justify-center h-full gap-6 text-center px-6">
       <div className="relative">
         <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl scale-150" />
         <div className="relative rounded-2xl bg-primary/10 border border-primary/20 p-6">
@@ -22,9 +22,9 @@ function WelcomeScreen() {
         </div>
       </div>
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Welcome to Social Dashboard</h1>
+        <h1 className="text-2xl font-bold">Welkom bij MijnZetel</h1>
         <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
-          Add your first Facebook Page Access Token to get started managing your pages.
+          Voeg je eerste Facebook pagina-token toe om te beginnen.
         </p>
       </div>
       <Button onClick={() => setOpen(true)} size="lg" className="gap-2 shadow-md">
